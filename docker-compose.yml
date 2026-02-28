@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+  bot:
+    build: .
+    container_name: buhgalter-bot
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./knowledge_base:/app/knowledge_base:ro
+      - ./templates:/app/templates:ro
+      - ./chroma_data:/app/chroma_data
+      - ./data:/app/data
+    depends_on:
+      - chromadb
+      - postgres
+    networks:
+      - buhgalter
+
+  chromadb:
+    image: chromadb/chroma:0.5.23
+    container_name: buhgalter-chroma
+    restart: unless-stopped
+    volumes:
+      - ./chroma_data:/chroma/chroma
+    ports:
+      - "127.0.0.1:8100:8000"
+    networks:
+      - buhgalter
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: buhgalter-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5433:5432"
+    networks:
+      - buhgalter
+
+volumes:
+  pgdata:
+
+networks:
+  buhgalter:
+    driver: bridge

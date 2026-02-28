@@ -1,0 +1,22 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Data (runtime)
+chroma_data/
+data/
+pgdata/
+
+# Logs
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
